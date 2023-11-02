@@ -19,13 +19,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,19 +32,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.lorcanacalculator.ui.theme.LorcanaCalculatorTheme
@@ -63,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    designPreview()
+                    designHolder()
                 }
             }
         }
@@ -71,7 +69,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun designPreview() {
+fun designHolder() {
+
+    var player2 by remember {
+        mutableStateOf(mutableStateListOf<Card>())
+    }
+
     Column {
         Row(
             modifier = Modifier
@@ -79,7 +82,9 @@ fun designPreview() {
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            designLifeTracker(Modifier.rotate(180.0f))
+            designLifeTracker(Modifier.rotate(180.0f)) {
+                player2.add(it)
+            }
         }
         Divider(modifier = Modifier.fillMaxWidth(), thickness = 4.dp, color = Color.Black)
         Row(
@@ -88,16 +93,30 @@ fun designPreview() {
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            designLifeTracker()
-            designCardTracker()
+            designLifeTracker() {
+                player2.add(it)
+            }
+
+            LazyRow {
+                if (player2.isNotEmpty()) {
+                    items(player2) {
+                        Text(text = it.toString(), modifier = Modifier.clickable {
+                            player2.remove(it)
+                        })
+                    }
+                }
+            }
         }
     }
 }
 
-@Preview
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun designLifeTracker(modifier: Modifier = Modifier) {
+fun designLifeTracker(modifier: Modifier = Modifier, addCard: (Card) -> Unit) {
     var points by remember {
+        mutableStateOf(0)
+    }
+    var i by remember {
         mutableStateOf(0)
     }
     Box(
@@ -122,12 +141,14 @@ fun designLifeTracker(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .clickable {
-                        points++
-                    },
-                tint = Color.White,
-
-                )
+                    .combinedClickable(
+                        onClick = { points++ },
+                        onLongClick = {
+                            addCard(Card(i))
+                            i++
+                        }),
+                tint = Color.White
+            )
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = "Minus",
@@ -154,11 +175,14 @@ fun designLifeTracker(modifier: Modifier = Modifier) {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
 @Composable
-fun designCardTracker(modifier: Modifier = Modifier) {
+fun designCardTracker(
+    modifier: Modifier = Modifier,
+    card: Card,
+    destroyCard: (Card) -> Unit
+) {
     var damage by remember {
-        mutableStateOf(0)
+        mutableStateOf(card.damageCounter)
     }
     Box(
         modifier = modifier
@@ -193,7 +217,11 @@ fun designCardTracker(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .combinedClickable(onClick = {
                         damage++
-                    }, onLongClick = { Log.d("Test:", "Destroyed") }),
+                        card.damageCounter = damage
+                    }, onLongClick = {
+                        destroyCard(card)
+                    }),
+
                 tint = Color.White,
 
                 )
@@ -206,6 +234,7 @@ fun designCardTracker(modifier: Modifier = Modifier) {
                     .combinedClickable(
                         onClick = {
                             if (damage > 0) damage--
+                            card.damageCounter = damage
                         },
                         onLongClick = {
                             Log.d("Test:", "Destroyed")
