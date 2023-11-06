@@ -25,7 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.lorcanacalculator.customView.CardTracker
 import com.example.lorcanacalculator.customView.DesignLifeTracker
+import com.example.lorcanacalculator.data.Card
 import com.example.lorcanacalculator.ui.theme.LorcanaCalculatorTheme
+import com.example.lorcanacalculator.ui.theme.blueLorcana
+import com.example.lorcanacalculator.ui.theme.purpleLorcana
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +63,7 @@ fun DesignHolder() {
     Column {
         Row(
             modifier = Modifier
-                .background(Color.Gray)
+                .background(purpleLorcana)
                 .fillMaxWidth()
                 .weight(1f)
         ) {
@@ -73,7 +76,7 @@ fun DesignHolder() {
         Divider(modifier = Modifier.fillMaxWidth(), thickness = 4.dp, color = Color.Black)
         Row(
             modifier = Modifier
-                .background(Color.DarkGray)
+                .background(blueLorcana)
                 .fillMaxWidth()
                 .weight(1f)
         ) {

@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lorcanacalculator.Card
+import com.example.lorcanacalculator.data.Card
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

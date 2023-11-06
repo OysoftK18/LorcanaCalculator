@@ -24,10 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.lorcanacalculator.Card
-import com.example.lorcanacalculator.utils.screenHeight
+import androidx.compose.ui.unit.sp
+import com.example.lorcanacalculator.data.Card
 
 @Composable
 fun CardTracker(
@@ -40,7 +40,7 @@ fun CardTracker(
 
     LazyRow(
         modifier = modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (playerField.value.isNotEmpty()) {
@@ -61,16 +61,22 @@ fun CardDesign(
     onClick: (Int) -> Unit,
     onLongClick: (Card) -> Unit
 ) {
-    val widht = screenHeight(LocalConfiguration.current)
-
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(widht/2),
+            .size(100.dp),
         contentAlignment = Alignment.Center
     ) {
-        Box(modifier = Modifier.fillMaxSize().alpha(0.1f).background(Color.White))
-        Text(text = card.damageCounter.toString())
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.1f)
+            .background(Color.White))
+        Text(
+            text = card.damageCounter.toString(),
+            fontSize = 32.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
         Column {
             Icon(
                 modifier = Modifier
@@ -92,7 +98,7 @@ fun CardDesign(
                     .fillMaxWidth()
                     .combinedClickable(
                         onClick = {
-                            if (card.damageCounter != 0){
+                            if (card.damageCounter != 0) {
                                 val newValue = card.damageCounter - 1
                                 onClick(newValue)
                             }
