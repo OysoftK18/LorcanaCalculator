@@ -33,11 +33,8 @@ import com.example.lorcanacalculator.Card
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun designLifeTracker(modifier: Modifier = Modifier, addCard: (Card) -> Unit) {
+fun DesignLifeTracker(modifier: Modifier = Modifier, addCard: (Card) -> Unit) {
     var points by remember {
-        mutableStateOf(0)
-    }
-    var i by remember {
         mutableStateOf(0)
     }
     Box(
@@ -56,18 +53,14 @@ fun designLifeTracker(modifier: Modifier = Modifier, addCard: (Card) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowUp,
+            Icon(imageVector = Icons.Default.KeyboardArrowUp,
                 contentDescription = "Plus",
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .combinedClickable(
-                        onClick = { points++ },
-                        onLongClick = {
-                            addCard(Card(i))
-                            i++
-                        }),
+                    .combinedClickable(onClick = { points++ }, onLongClick = {
+                        addCard(Card(damageCounter = 0))
+                    }),
                 tint = Color.White
             )
             Icon(
